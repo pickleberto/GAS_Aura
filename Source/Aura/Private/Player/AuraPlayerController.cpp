@@ -4,11 +4,19 @@
 #include "Player/AuraPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Interaction/EnemyInterface.h"
 
 AAuraPlayerController::AAuraPlayerController()
 {
 	// server replicates to clients
 	bReplicates = true;
+}
+
+void AAuraPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+
+	CursorTrace();
 }
 
 void AAuraPlayerController::BeginPlay()
@@ -60,5 +68,35 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 	{
 		ControlledPawn->AddMovementInput(FowardDirection, InputAxisVector.Y);
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
+	}
+}
+
+void AAuraPlayerController::CursorTrace()
+{
+	FHitResult CursorHit;
+	GetHitResultUnderCursor(ECC_Visibility, false, CursorHit);
+	if (!CursorHit.bBlockingHit) return;
+
+	LastActor = ThisActor;
+	ThisActor = Cast<IEnemyInterface>(CursorHit.GetActor());
+
+	if (LastActor == nullptr)
+	{
+		if (ThisActor) // Its a newly hovered actor
+		{
+			ThisActor->HighlightActor();
+		}
+	}
+	else
+	{
+		if (ThisActor == nullptr) // No longer hovering
+		{
+			LastActor->UnHighlightActor();
+		}
+		else if(LastActor != ThisActor) // Changing hover target
+		{
+			LastActor->UnHighlightActor();
+			ThisActor->HighlightActor();
+		}
 	}
 }
