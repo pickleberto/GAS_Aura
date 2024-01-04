@@ -41,9 +41,9 @@ private:
 	void Move(const FInputActionValue& InputActionValue);
 
 	void CursorTrace();
-
 	TObjectPtr<IEnemyInterface> LastActor;
 	TObjectPtr<IEnemyInterface> ThisActor;
+	FHitResult CursorHit;
 
 	void AbilityIputTagPressed(FGameplayTag InputTag);
 	void AbilityIputTagReleased(FGameplayTag InputTag);
