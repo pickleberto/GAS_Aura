@@ -9,6 +9,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Aura/Aura.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 
 AAuraProjectile::AAuraProjectile()
 {
@@ -60,6 +62,11 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 
 	if (HasAuthority())
 	{
+		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+		{
+			TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
+		}
+
 		Destroy();
 	}
 	else
@@ -70,7 +77,7 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 
 void AAuraProjectile::EndEffects()
 {
-	AudioComponent->Stop();
+	if(AudioComponent) AudioComponent->Stop();
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
 }
