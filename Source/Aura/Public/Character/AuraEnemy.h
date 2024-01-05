@@ -7,6 +7,11 @@
 #include "Interaction/EnemyInterface.h"
 #include "AuraEnemy.generated.h"
 
+class UWidgetComponent;
+class UUserWidget;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedSignature, float, NewValue);
+
 /**
  * 
  */
@@ -27,10 +32,16 @@ public:
 	virtual int32 GetPlayerLevel() override;
 	/** end Combat Interface*/
 
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Attributes")
+	FOnHealthChangedSignature OnHealthChanged;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
 	int32 Level = 1;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UWidgetComponent> HealthBarWidgetComponent;
 };
