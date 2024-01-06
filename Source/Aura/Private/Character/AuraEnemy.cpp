@@ -52,14 +52,22 @@ void AAuraEnemy::BeginPlay()
 	if (UAuraUserWidget* HealthBar = Cast<UAuraUserWidget>(HealthBarWidgetComponent->GetUserWidgetObject()))
 	{
 		HealthBar->SetWidgetController(this);
+	}
 
-		const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet);
+	if(const UAuraAttributeSet* AuraAttributeSet = CastChecked<UAuraAttributeSet>(AttributeSet))
+	{
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 			AuraAttributeSet->GetHealthAttribute()).AddLambda(
 				[this](const FOnAttributeChangeData& Data) { OnHealthChanged.Broadcast(Data.NewValue); }
 		);
 
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
+			AuraAttributeSet->GetMaxHealthAttribute()).AddLambda(
+				[this](const FOnAttributeChangeData& Data) { OnMaxHealthChanged.Broadcast(Data.NewValue); }
+		);
+
 		OnHealthChanged.Broadcast(AuraAttributeSet->GetHealth());
+		OnMaxHealthChanged.Broadcast(AuraAttributeSet->GetMaxHealth());
 	}
 }
 
