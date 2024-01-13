@@ -16,11 +16,19 @@ struct AuraDamageStatics
 	DECLARE_ATTRIBUTE_CAPTUREDEF(BlockChance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(ArmorPenetration);
 
+	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitChance);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitDamage);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitResistance);
+
 	AuraDamageStatics()
 	{
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, Armor, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, BlockChance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, ArmorPenetration, Source, false);
+
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitChance, Source, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitDamage, Source, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitResistance, Target, false);
 	}
 };
 
@@ -36,6 +44,9 @@ UExecCalc_Damage::UExecCalc_Damage()
 	RelevantAttributesToCapture.Add(DamageStatics().BlockChanceDef);
 	RelevantAttributesToCapture.Add(DamageStatics().ArmorPenetrationDef);
 
+	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitChanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitDamageDef);
+	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitResistanceDef);
 }
 
 void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
@@ -62,7 +73,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	// If block, halve the damage
 	if (bBlocked) Damage /= 2.f;
-
+	
 	float TargetArmor = GetAttributeValue(DamageStatics().ArmorDef, EvalParams, ExecutionParams);
 	float SourceArmorPenetration = GetAttributeValue(DamageStatics().ArmorPenetrationDef, EvalParams, ExecutionParams);
 
@@ -79,6 +90,18 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	// Armor ignores a percentage of incoming damage
 	Damage *= (100 - EffectiveArmor * EffectiveArmorCoefficient) / 100.f;
+
+	float SourceCritChance = GetAttributeValue(DamageStatics().CriticalHitChanceDef, EvalParams, ExecutionParams);
+	float TargetCritResistance = GetAttributeValue(DamageStatics().CriticalHitResistanceDef, EvalParams, ExecutionParams);
+
+	const float EffectiveCritChance = SourceCritChance * ((100 - TargetCritResistance) / 100.f);
+	const bool bCriticalHit = FMath::RandRange(0, 100) < EffectiveCritChance;
+
+	float SourceCritDmgBonus = GetAttributeValue(DamageStatics().CriticalHitDamageDef, EvalParams, ExecutionParams);
+	
+	const float EffectiveCritDmgBonus = 2.f + (SourceCritDmgBonus * .01f);
+	
+	if(bCriticalHit) Damage = Damage * EffectiveCritDmgBonus;
 
 	const FGameplayModifierEvaluatedData EvaluatedData(UAuraAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);
 	OutExecutionOutput.AddOutputModifier(EvaluatedData);
