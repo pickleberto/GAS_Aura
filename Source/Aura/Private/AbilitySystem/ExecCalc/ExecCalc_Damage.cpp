@@ -9,6 +9,7 @@
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Interaction/CombatInterface.h"
+#include "AuraAbilityTypes.h"
 
 struct AuraDamageStatics
 {
@@ -60,6 +61,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	ICombatInterface* TargetCombatInterface = Cast<ICombatInterface>(TargetAvatar);
 
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
+	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
 
 	FAggregatorEvaluateParameters EvalParams;
 	EvalParams.SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
@@ -70,6 +72,8 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	
 	float TargetBlockChance = GetAttributeValue(DamageStatics().BlockChanceDef, EvalParams, ExecutionParams);
 	const bool bBlocked = FMath::RandRange(0, 100) < TargetBlockChance;
+
+	UAuraAbilitySystemLibrary::SetIsBlockedHit(EffectContextHandle, bBlocked);
 
 	// If block, halve the damage
 	if (bBlocked) Damage /= 2.f;
@@ -101,6 +105,8 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	// Critical Hit Resistance reduces Critical Hit Chance by a certain percentage
 	const float EffectiveCritChance = SourceCritChance - TargetCritResistance * CritResistanceCoefficient;
 	const bool bCriticalHit = FMath::RandRange(0, 100) < EffectiveCritChance;
+
+	UAuraAbilitySystemLibrary::SetIsCriticalHit(EffectContextHandle, bCriticalHit);
 
 	// Double damage plus a bonus if critical hit
 	if(bCriticalHit) Damage = Damage * 2.f + SourceCritDmgBonus;
