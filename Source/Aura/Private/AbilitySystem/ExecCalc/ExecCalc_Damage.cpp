@@ -93,15 +93,17 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	float SourceCritChance = GetAttributeValue(DamageStatics().CriticalHitChanceDef, EvalParams, ExecutionParams);
 	float TargetCritResistance = GetAttributeValue(DamageStatics().CriticalHitResistanceDef, EvalParams, ExecutionParams);
+	float SourceCritDmgBonus = GetAttributeValue(DamageStatics().CriticalHitDamageDef, EvalParams, ExecutionParams);
 
-	const float EffectiveCritChance = SourceCritChance * ((100 - TargetCritResistance) / 100.f);
+	const float CritResistanceCoefficient = CharacterClassInfo->DamageCalculationCoefficients
+		->FindCurve(FName("CriticalHitResistance"), FString())->Eval(TargetCombatInterface->GetPlayerLevel());
+
+	// Critical Hit Resistance reduces Critical Hit Chance by a certain percentage
+	const float EffectiveCritChance = SourceCritChance - TargetCritResistance * CritResistanceCoefficient;
 	const bool bCriticalHit = FMath::RandRange(0, 100) < EffectiveCritChance;
 
-	float SourceCritDmgBonus = GetAttributeValue(DamageStatics().CriticalHitDamageDef, EvalParams, ExecutionParams);
-	
-	const float EffectiveCritDmgBonus = 2.f + (SourceCritDmgBonus * .01f);
-	
-	if(bCriticalHit) Damage = Damage * EffectiveCritDmgBonus;
+	// Double damage plus a bonus if critical hit
+	if(bCriticalHit) Damage = Damage * 2.f + SourceCritDmgBonus;
 
 	const FGameplayModifierEvaluatedData EvaluatedData(UAuraAttributeSet::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);
 	OutExecutionOutput.AddOutputModifier(EvaluatedData);
