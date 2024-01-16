@@ -8,3 +8,4 @@ Online repo for the Gameplay Ability System - Unreal Engine course.
 - Adapt input for gamepads (remove the mouse inputs);
 - Scale ability base damage with source character attributes (AuraProjectileSpell)
 - Make crit damage bonus a percent instead of flat damage
+- Improve elemental resistances definitions to use more Attributes (Intelligence)
