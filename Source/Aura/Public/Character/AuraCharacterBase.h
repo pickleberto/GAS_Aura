@@ -41,7 +41,7 @@ protected:
 	FName WeaponTipSocketName;
 
 	/** Combat Interface */
-	virtual FVector GetCombatSocketLocation() override;
+	virtual FVector GetCombatSocketLocation_Implementation() override;
 	/** end Combat Interface */
 
 	UPROPERTY()
