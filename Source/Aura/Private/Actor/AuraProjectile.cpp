@@ -95,4 +95,5 @@ void AAuraProjectile::EndEffects()
 	if(AudioComponent) AudioComponent->Stop();
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+	bHit = true;
 }
