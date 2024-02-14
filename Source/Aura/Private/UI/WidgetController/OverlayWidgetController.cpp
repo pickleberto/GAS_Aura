@@ -5,7 +5,7 @@
 
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
-#include "AbilitySystem/Data/AbilityInfo.h"
+
 
 void UOverlayWidgetController::BroadcastInitialValues()
 {
