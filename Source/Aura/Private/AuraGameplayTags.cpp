@@ -52,6 +52,10 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	GameplayTags.Attributes_Secondary_MaxMana = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Attributes.Secondary.MaxMana"), FString("Maximum amount of Mana obtainable"));
 
+	// Meta Attributes
+	GameplayTags.Attributes_Meta_IncomingXP = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Meta.IncomingXP"), FString("Incoming XP Meta Attribute"));
+
 	// Input Tag
 	GameplayTags.InputTag_LMB = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("InputTag.LMB"), FString("Input Tag for Left Mouse Button"));
