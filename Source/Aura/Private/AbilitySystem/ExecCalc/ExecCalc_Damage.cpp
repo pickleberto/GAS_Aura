@@ -89,8 +89,18 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	AActor* SourceAvatar = SourceASC ? SourceASC->GetAvatarActor() : nullptr;
 	AActor* TargetAvatar = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
-	ICombatInterface* SourceCombatInterface = Cast<ICombatInterface>(SourceAvatar);
-	ICombatInterface* TargetCombatInterface = Cast<ICombatInterface>(TargetAvatar);
+
+	int32 SourcePlayerLevel = 1;
+	if (SourceAvatar->Implements<UCombatInterface>())
+	{
+		SourcePlayerLevel = ICombatInterface::Execute_GetPlayerLevel(SourceAvatar);
+	}
+
+	int32 TargetPlayerLevel = 1;
+	if (TargetAvatar->Implements<UCombatInterface>())
+	{
+		TargetPlayerLevel = ICombatInterface::Execute_GetPlayerLevel(TargetAvatar);
+	}
 
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
 	FGameplayEffectContextHandle EffectContextHandle = Spec.GetContext();
@@ -132,13 +142,13 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	const UCharacterClassInfo* CharacterClassInfo = UAuraAbilitySystemLibrary::GetCharacterClassInfo(SourceAvatar);
 
 	const float ArmorPenetrationCoefficient = CharacterClassInfo->DamageCalculationCoefficients
-		->FindCurve(FName("ArmorPenetration"), FString())->Eval(SourceCombatInterface->GetPlayerLevel());
+		->FindCurve(FName("ArmorPenetration"), FString())->Eval(SourcePlayerLevel);
 
 	// Armor Penetration ignores a percentage of the Target's Armor
 	float EffectiveArmor = TargetArmor * ((100 - SourceArmorPenetration * ArmorPenetrationCoefficient) / 100.f);
 	
 	const float EffectiveArmorCoefficient = CharacterClassInfo->DamageCalculationCoefficients
-		->FindCurve(FName("EffectiveArmor"), FString())->Eval(TargetCombatInterface->GetPlayerLevel());
+		->FindCurve(FName("EffectiveArmor"), FString())->Eval(TargetPlayerLevel);
 
 	// Armor ignores a percentage of incoming damage
 	Damage *= (100 - EffectiveArmor * EffectiveArmorCoefficient) / 100.f;
@@ -148,7 +158,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	float SourceCritDmgBonus = GetAttributeValue(DamageStatics().CriticalHitDamageDef, EvalParams, ExecutionParams);
 
 	const float CritResistanceCoefficient = CharacterClassInfo->DamageCalculationCoefficients
-		->FindCurve(FName("CriticalHitResistance"), FString())->Eval(TargetCombatInterface->GetPlayerLevel());
+		->FindCurve(FName("CriticalHitResistance"), FString())->Eval(TargetPlayerLevel);
 
 	// Critical Hit Resistance reduces Critical Hit Chance by a certain percentage
 	const float EffectiveCritChance = SourceCritChance - TargetCritResistance * CritResistanceCoefficient;
