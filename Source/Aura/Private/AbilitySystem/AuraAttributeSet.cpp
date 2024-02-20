@@ -181,8 +181,41 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		SetIncomingXP(0);
 
 		//TODO: Check for level up
-		if (Props.SourceCharacter->Implements<UPlayerInterface>())
+
+		// Source Character is the owner, since GA_ListenForEvents applies GE_EventBasedEffect, adding to incoming XP
+		if (Props.SourceCharacter->Implements<UPlayerInterface>() && Props.SourceCharacter->Implements<UCombatInterface>())
 		{
+			const int32 CurrentLevel = ICombatInterface::Execute_GetPlayerLevel(Props.SourceCharacter);
+			const int32 CurrentXP = IPlayerInterafce::Execute_GetXP(Props.SourceCharacter);
+
+			const int32 NewLevel = IPlayerInterafce::Execute_FindLevelForXP(Props.SourceCharacter, CurrentXP + LocalIncomingXP);
+			const int32 NumLevelUps = NewLevel - CurrentLevel;
+
+			if (NumLevelUps > 0)
+			{
+				const int32 AttributePointsReward = IPlayerInterface::Execute_GetAttributePointsReward(Props.SourceCharacter, CurrentLevel);
+				const int32 SpellPointsReward = IPlayerInterface::Execute_GetSpellPointsReward(Props.SourceCharacter, CurrentLevel);
+
+				IPlayerInterafce::Execute_AddToPlayerLevel(Props.SourceCharacter, NumLevelUps);
+				IPlayerInterafce::Execute_AddToAttributePoints(Props.SourceCharacter, AttributePointsReward);
+				IPlayerInterafce::Execute_AddToSpellPoints(Props.SourceCharacter, SpellPointsReward);
+				
+				//int32 TotalAttributePointsReward = 0;
+				//int32 TotalSpellPointsReward = 0;
+				//for (int i = 0; i < NumLevelUps; i++)
+				//{
+				//	TotalAttributePointsReward += IPlayerInterface::Execute_GetAttributePointsReward(Props.SourceCharacter, CurrentLevel + i);
+				//	TotalSpellPointsReward += IPlayerInterface::Execute_GetSpellPointsReward(Props.SourceCharacter, CurrentLevel + i);
+				//}
+				//
+				//IPlayerInterafce::Execute_AddToAttributePoints(Props.SourceCharacter, TotalAttributePointsReward);
+				//IPlayerInterafce::Execute_AddToSpellPoints(Props.SourceCharacter, TotalSpellPointsReward);
+				//IPlayerInterafce::Execute_AddToPlayerLevel(Props.SourceCharacter, NumLevelUps);
+
+				SetHealth(GetMaxHealth());
+				SetMana(GetMaxMana());
+			}
+
 			IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXP);
 		}
 	}
