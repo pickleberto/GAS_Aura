@@ -200,6 +200,8 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 				SetHealth(GetMaxHealth());
 				SetMana(GetMaxMana());
+
+				IPlayerInterface::Execute_LevelUp(Props.SourceCharacter);
 			}
 
 			IPlayerInterface::Execute_AddToXP(Props.SourceCharacter, LocalIncomingXP);
