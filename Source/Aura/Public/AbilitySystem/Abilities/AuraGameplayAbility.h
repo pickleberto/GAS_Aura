@@ -22,4 +22,13 @@ public:
 	virtual FString GetNextLevelDescription(int32 Level);
 
 	static FString GetLockedDescription(int32 Level);
+
+protected:
+	virtual FString GetLevelBasedDescription(int32 Level);
+	virtual FString GetSpellName();
+
+	float GetManaCost(float InLevel = 1.f) const;
+	float GetCooldown(float InLevel = 1.f) const;
+
+	FString GetFullDescription(FString Title, int32 Level);
 };
