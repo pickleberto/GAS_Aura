@@ -14,6 +14,7 @@ struct FGameplayEffectContextHandle;
 class USpellMenuWidgetController;
 struct FWidgetControllerParams;
 class UAbilityInfo;
+struct FDamageEffectParams;
 
 /**
  * 
@@ -68,6 +69,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|GameplayMechanics")
 	static int32 GetXPRewardForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 Level);
+
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|DamageEffect")
+	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& DamageParams);
 
 private:
 	static void ApplyGameplayEffect(UAbilitySystemComponent* ASC, const AActor* AvatarActor, TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level);
