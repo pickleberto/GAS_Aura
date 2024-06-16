@@ -7,7 +7,7 @@
 
 FString UAuraFireBolt::GetLevelBasedDescription(int32 Level)
 {
-	const int32 dmg = GetDamageByDamageType(Level, FAuraGameplayTags::Get().Damage_Fire);
+	const int32 dmg = Damage.GetValueAtLevel(Level);
 	FString bolt = Level > 1 ? L"bolts" : L"bolt";
 	return FString::Printf(
 		TEXT(
