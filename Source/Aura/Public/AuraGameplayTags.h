@@ -67,6 +67,11 @@ public:
 	FGameplayTag Debuff_Physical;
 
 	TMap<FGameplayTag, FGameplayTag> DamageTypesToDebuffs;
+	
+	FGameplayTag Debuff_Chance;
+	FGameplayTag Debuff_Damage;
+	FGameplayTag Debuff_Duration;
+	FGameplayTag Debuff_Frequency;
 
 	// Effects
 	FGameplayTag Effects_HitReact;
