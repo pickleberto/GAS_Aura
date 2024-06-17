@@ -106,7 +106,6 @@ protected:
 	UPROPERTY()
 	float DebuffFrequency = 0.f;
 
-	UPROPERTY()
 	TSharedPtr<FGameplayTag> DamageType;
 };
 
