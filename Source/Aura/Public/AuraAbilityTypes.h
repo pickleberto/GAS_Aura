@@ -54,9 +54,19 @@ struct FAuraGameplayEffectContext : public FGameplayEffectContext
 public:
 	bool IsBlockedHit() const { return bIsBlockedHit; }
 	bool IsCriticalHit() const { return bIsCriticalHit; }
+	bool IsSuccessfulDebuff() const { return bIsSuccessfulDebuff; }
+	float GetDebuffDamage() const { return DebuffDamage; }
+	float GetDebuffDuration() const { return DebuffDuration; }
+	float GetDebuffFrequency() const { return DebuffFrequency; }
+	TSharedPtr<FGameplayTag> GetDamageType() const { return DamageType; }
 
 	void SetIsBlockedHit(bool bValue) { bIsBlockedHit = bValue; }
 	void SetIsCriticalHit(bool bValue) { bIsCriticalHit = bValue; }
+	void SetIsSuccessfulDebuff(bool bValue) { bIsSuccessfulDebuff = bValue; }
+	void SetDebuffDamage(float Value) { DebuffDamage = Value; }
+	void SetDebuffDuration(float Value) { DebuffDuration = Value; }
+	void SetDebuffFrequency(float Value) { DebuffFrequency = Value; }
+
 
 	virtual UScriptStruct* GetScriptStruct() const
 	{
@@ -83,6 +93,21 @@ protected:
 
 	UPROPERTY()
 	bool bIsCriticalHit = false;
+
+	UPROPERTY()
+	bool bIsSuccessfulDebuff = false;
+
+	UPROPERTY()
+	float DebuffDamage = 0.f;
+
+	UPROPERTY()
+	float DebuffDuration = 0.f;
+
+	UPROPERTY()
+	float DebuffFrequency = 0.f;
+
+	UPROPERTY()
+	TSharedPtr<FGameplayTag> DamageType;
 };
 
 template<>
