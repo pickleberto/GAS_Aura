@@ -14,6 +14,7 @@
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Aura/AuraLogChannels.h"
 #include "AuraAbilityTypes.h"
+#include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
