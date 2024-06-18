@@ -81,6 +81,11 @@ void AAuraCharacterBase::Die(const FVector& DeathImpulse)
 	MulticastHandleDeath(DeathImpulse);
 }
 
+void AAuraCharacterBase::Knockback(const FVector& Impulse)
+{
+	LaunchCharacter(Impulse, true, true);
+}
+
 bool AAuraCharacterBase::IsDead_Implementation() const
 {
 	return bDead;
