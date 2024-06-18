@@ -49,37 +49,39 @@ void AAuraProjectile::BeginPlay()
 
 void AAuraProjectile::Destroyed()
 {
-	if (!bHit && !HasAuthority())
-	{
-		EndEffects();
-	}
-
+	if (!bHit && !HasAuthority()) EndEffects();
+	
 	Super::Destroyed();
 }
 
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!DamageEffectSpecHandle.Data.IsValid() 
-		|| DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() == OtherActor)
-	{
-		return;
-	}
-
-	if (!UAuraAbilitySystemLibrary::IsNotFriend(DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser(), OtherActor))
-	{
-		return;
-	}
-
-	if (!bHit)
-	{
-		EndEffects();
-	}
+	AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
+	
+	if (SourceAvatarActor == OtherActor) return;
+	if (!UAuraAbilitySystemLibrary::IsNotFriend(SourceAvatarActor, OtherActor)) return;
+	
+	if (!bHit) EndEffects();
+	
 
 	if (HasAuthority())
 	{
 		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
-			TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
+			const FVector DeathImpulse = GetActorForwardVector() * DamageEffectParams.DeathImpulseMagnitude;
+			DamageEffectParams.DeathImpulse = DeathImpulse;
+
+			const bool bKnockback = FMath::RandRange(1, 100) < DamageEffectParams.KnockbackChance;
+			if (bKnockback)
+			{
+				FRotator Rotation = GetActorRotation();
+				Rotation.Pitch = 45.f;
+				const FVector KnockbackForce = Rotation.Vector() * DamageEffectParams.KnockbackForceMagnitude;
+				DamageEffectParams.KnockbackForce = KnockbackForce;
+			}
+
+			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
+			UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
 		}
 
 		Destroy();

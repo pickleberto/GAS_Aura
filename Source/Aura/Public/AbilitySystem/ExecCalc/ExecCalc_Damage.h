@@ -21,4 +21,5 @@ public:
 
 private:
 	float GetAttributeValue(const FGameplayEffectAttributeCaptureDefinition& AttrbuteDef, const FAggregatorEvaluateParameters& EvaluationParams, const FGameplayEffectCustomExecutionParameters& ExecutionParams) const;
+	void DetermineDebuff(const FGameplayEffectCustomExecutionParameters& ExecutionParams, const FGameplayEffectSpec& Spec, FAggregatorEvaluateParameters EvaluationParams, const TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition>& TagsToDefs) const;
 };
