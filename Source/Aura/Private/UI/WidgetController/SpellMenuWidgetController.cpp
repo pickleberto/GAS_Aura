@@ -12,7 +12,8 @@ void USpellMenuWidgetController::BroadcastInitialValues()
 {
 	BroadcastAbilityInfo();
 
-	SpellPointsChangedDelegate.Broadcast(GetAuraPS()->GetSpellPoints());
+	CurrentSpellPoints = GetAuraPS()->GetSpellPoints();
+	SpellPointsChangedDelegate.Broadcast(CurrentSpellPoints);
 }
 
 void USpellMenuWidgetController::BindCallbacksToDependencies()
