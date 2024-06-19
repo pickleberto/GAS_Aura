@@ -37,7 +37,7 @@ protected:
 	float DebuffChance = 20.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
-	float DebuffDamage = 5.f;
+	float DebuffDamage = 1.f;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	float DebuffFrequency = 1.f;
@@ -49,7 +49,7 @@ protected:
 	float DeathImpulseMagnitude = 1000.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
-	float KnockbackForceMagnitude = 1000.f;
+	float KnockbackForceMagnitude = 100.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	float KnockbackChance = 0.f;
