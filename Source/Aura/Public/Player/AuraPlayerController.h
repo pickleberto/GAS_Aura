@@ -15,6 +15,7 @@ class UAuraInputConfig;
 class UAuraAbilitySystemComponent;
 class USplineComponent;
 class UDamageTextComponent;
+class UNiagaraSystem;
 
 /**
  * 
@@ -46,8 +47,8 @@ private:
 	TObjectPtr<UInputAction> ShiftAction;
 
 	void ShiftPressed() { bShiftKeyDown = true; }
-	void ShiftReleased() { bShiftKeyDown = true; }
-	bool bShiftKeyDown = true;
+	void ShiftReleased() { bShiftKeyDown = false; }
+	bool bShiftKeyDown = false;
 
 	void Move(const FInputActionValue& InputActionValue);
 
@@ -79,6 +80,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USplineComponent> Spline;
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UNiagaraSystem> ClickNiagaraSystem;
 
 	void AutoRun();
 
