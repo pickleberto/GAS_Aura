@@ -49,6 +49,12 @@ void AAuraProjectile::BeginPlay()
 
 void AAuraProjectile::Destroyed()
 {
+	if (AudioComponent)
+	{
+		AudioComponent->Stop();
+		AudioComponent->DestroyComponent();
+	}
+
 	if (!bHit && !HasAuthority()) EndEffects();
 	
 	Super::Destroyed();
@@ -94,8 +100,12 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 
 void AAuraProjectile::EndEffects()
 {
-	if(AudioComponent) AudioComponent->Stop();
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
+	if (AudioComponent) 
+	{
+		AudioComponent->Stop();
+		AudioComponent->DestroyComponent();
+	}
 	bHit = true;
 }
