@@ -120,13 +120,16 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 			{
 				if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor))
 				{
-					CombatInterface->Knockback(UAuraAbilitySystemLibrary::GetDeathImpulse(Props.EffectContextHandle));
+					CombatInterface->Knockback(KnockbackForce);
 				}
 			}
 
-			FGameplayTagContainer TagContainer;
-			TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
-			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			if (Props.TargetAvatarActor->Implements<UCombatInterface>() && !ICombatInterface::Execute_IsBeingShocked(Props.TargetAvatarActor))
+			{
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
+				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			}
 		}
 
 		const bool bBlockedHit = UAuraAbilitySystemLibrary::IsBlockedHit(Props.EffectContextHandle);
