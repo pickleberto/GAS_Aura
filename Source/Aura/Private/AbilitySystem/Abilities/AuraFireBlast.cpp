@@ -3,6 +3,11 @@
 
 #include "AbilitySystem/Abilities/AuraFireBlast.h"
 
+TArray<AAuraFireBall*> UAuraFireBlast::SpawnFireBalls()
+{
+	return TArray<AAuraFireBall*>();
+}
+
 FString UAuraFireBlast::GetLevelBasedDescription(int32 Level)
 {
 	const int32 dmg = Damage.GetValueAtLevel(Level);
