@@ -41,8 +41,13 @@ protected:
 
 	bool IsValidOverlap(AActor* OtherActor);
 
-private:
+	virtual void EndEffects();
+
+	UPROPERTY()
+	TObjectPtr<UAudioComponent> AudioComponent;
 	bool bHit = false;
+
+private:
 	
 	UPROPERTY(EditDefaultsOnly)
 	float LifeSpan = 15.f;
@@ -59,8 +64,4 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USoundBase> LoopingSound;
 
-	UPROPERTY()
-	TObjectPtr<UAudioComponent> AudioComponent;
-
-	void EndEffects();
 };
