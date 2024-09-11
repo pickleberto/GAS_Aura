@@ -103,6 +103,7 @@ protected:
 	
 	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 
+	UPROPERTY(BlueprintReadOnly)
 	bool bDead = false;
 
 	UPROPERTY()
