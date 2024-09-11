@@ -77,6 +77,8 @@ public:
 	UFUNCTION()
 	virtual void OnRep_Burned();
 
+	void SetCharacterClass(ECharacterClass InClass) { CharacterClass = InClass; }
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
